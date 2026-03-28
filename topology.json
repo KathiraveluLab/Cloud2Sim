@@ -1,0 +1,28 @@
+{
+  "datacenters": [
+    {
+      "name": "Datacenter_0",
+      "arch": "x86",
+      "os": "Linux",
+      "vmm": "Xen",
+      "timeZone": 10.0,
+      "cost": 3.0,
+      "costPerMem": 0.05,
+      "costPerStorage": 0.001,
+      "costPerBw": 0.0,
+      "hosts": [
+        { "id": 0, "ram": 2048, "storage": 1000000, "bw": 10000, "mips": 1000, "pes": 2 },
+        { "id": 1, "ram": 2048, "storage": 1000000, "bw": 10000, "mips": 1000, "pes": 2 }
+      ]
+    }
+  ],
+  "vms": [
+    { "id": 0, "userId": 0, "mips": 1000, "pes": 1, "ram": 512, "bw": 1000, "size": 10000, "vmm": "Xen" },
+    { "id": 1, "userId": 0, "mips": 1000, "pes": 1, "ram": 512, "bw": 1000, "size": 10000, "vmm": "Xen" }
+  ],
+  "cloudlets": [
+    { "id": 0, "length": 40000, "pes": 1, "fileSize": 300, "outputSize": 300 },
+    { "id": 1, "length": 40000, "pes": 1, "fileSize": 300, "outputSize": 300 },
+    { "id": 2, "length": 50000, "pes": 1, "fileSize": 300, "outputSize": 300 }
+  ]
+}

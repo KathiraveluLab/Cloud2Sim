@@ -24,6 +24,10 @@ import pt.inesc_id.gsd.cloud2sim.hazelcast.HzDatacenterBroker;
 import pt.inesc_id.gsd.cloud2sim.applications.roundrobin.RoundRobinDatacenterBroker;
 import pt.inesc_id.gsd.cloud2sim.hazelcast.HzVm;
 import pt.inesc_id.gsd.cloud2sim.search.SearchProcessor;
+import pt.inesc_id.gsd.cloud2sim.topology.TopologyModel;
+import pt.inesc_id.gsd.cloud2sim.topology.TopologyParser;
+
+import java.io.IOException;
 
 /**
  * The class that creates VMs and Cloudlets, with hard-coded values. Replace as appropriate.
@@ -31,6 +35,15 @@ import pt.inesc_id.gsd.cloud2sim.search.SearchProcessor;
 public class SimulationEngine {
     private static boolean isRR = ConfigReader.getIsRR();
     private static HzObjectCollection objectCollection = HzObjectCollection.getHzObjectCollection();
+    private static TopologyModel.Topology topology = null;
+
+    /**
+     * Loads a topology from a JSON file.
+     * @param filePath path to the JSON file
+     */
+    public static void loadTopology(String filePath) throws IOException {
+        topology = TopologyParser.parse(filePath);
+    }
 
     /**
      * Create a VM with the parameters
@@ -55,6 +68,19 @@ public class SimulationEngine {
 
         Cloud2SimEngine.setVmsInit(init);
         Cloud2SimEngine.setVmsFinal(end);
+
+        if (topology != null && topology.vms != null) {
+            for (TopologyModel.VmModel vmModel : topology.vms) {
+                if (isRR) {
+                    vm = new HzVm(vmModel.id, vmModel.userId, vmModel.mips, vmModel.pes, vmModel.ram, vmModel.bw, vmModel.size, vmModel.vmm, new CloudletSchedulerTimeShared());
+                } else {
+                    vm = new HzVm(vmModel.id, vmModel.userId, vmModel.mips, vmModel.pes, vmModel.ram, vmModel.bw, vmModel.size, vmModel.vmm, new CloudletSchedulerSpaceShared());
+                }
+                objectCollection.getUserVmList().put(vmModel.id, vm);
+                SearchProcessor.getInstance().indexObject(vm);
+            }
+            return;
+        }
 
         for (int i = init; i < end; i++) {
             if (isRR) {
@@ -87,6 +113,16 @@ public class SimulationEngine {
 
         Cloud2SimEngine.setCloudletsInit(init);
         Cloud2SimEngine.setCloudletsFinal(end);
+
+        if (topology != null && topology.cloudlets != null) {
+            for (TopologyModel.CloudletModel clModel : topology.cloudlets) {
+                cloudlet = new HzCloudlet(clModel.id, clModel.length, clModel.pes, clModel.fileSize, clModel.outputSize, utilizationModel, utilizationModel, utilizationModel);
+                cloudlet.setUserId(userId);
+                objectCollection.getUserCloudletList().put(clModel.id, cloudlet);
+                SearchProcessor.getInstance().indexObject(cloudlet);
+            }
+            return;
+        }
 
         for (int i = init; i < end; i++) {
             int f = (int) ((Math.random() * 40) + 1);
