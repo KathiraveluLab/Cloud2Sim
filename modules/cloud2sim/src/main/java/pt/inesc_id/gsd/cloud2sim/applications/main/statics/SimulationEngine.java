@@ -30,6 +30,10 @@ import pt.inesc_id.gsd.cloud2sim.topology.TopologyModel;
 import pt.inesc_id.gsd.cloud2sim.topology.TopologyParser;
 import pt.inesc_id.gsd.cloud2sim.workload.DistributionProvider;
 import pt.inesc_id.gsd.cloud2sim.workload.WorkloadGenerator;
+import pt.inesc_id.gsd.cloud2sim.fault.FailureInjector;
+import pt.inesc_id.gsd.cloud2sim.fault.FailureModel;
+import pt.inesc_id.gsd.cloud2sim.workload.DistributionProvider;
+import pt.inesc_id.gsd.cloud2sim.workload.WorkloadGenerator;
 
 import java.io.IOException;
 
@@ -151,6 +155,17 @@ public class SimulationEngine {
     public static void createDynamicWorkload(int userId, DistributionProvider provider, int count) {
         WorkloadGenerator generator = new WorkloadGenerator(provider);
         generator.start(userId, count);
+    }
+
+    /**
+     * Starts failure injection in the cluster.
+     * @param type failure type
+     * @param mtbf Mean Time Between Failures
+     */
+    public static void startFailureInjection(FailureModel.FailureType type, double mtbf) {
+        FailureModel model = new FailureModel(type, mtbf);
+        FailureInjector injector = new FailureInjector(model);
+        injector.start();
     }
 
     /**
