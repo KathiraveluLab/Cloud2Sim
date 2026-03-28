@@ -20,6 +20,7 @@ import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import pt.inesc_id.gsd.cloud2sim.scale.AutoScaleConfigReader;
 import pt.inesc_id.gsd.cloud2sim.scale.adaptive.AdaptiveScalerProbe;
 import pt.inesc_id.gsd.cloud2sim.scale.health.HealthMonitor;
+import pt.inesc_id.gsd.cloud2sim.scale.predictive.PredictiveScaler;
 import org.cloudbus.cloudsim.compatibility.hazelcast.HzConfigReader;
 
 import java.util.ArrayList;
@@ -51,7 +52,13 @@ public class Cloud2SimEngine {
 
             if (AutoScaleConfigReader.getMode() != null && AutoScaleConfigReader.getMode().equalsIgnoreCase("adaptive")) {
                 AdaptiveScalerProbe.startHealthAnnouncerInstance();
-                Thread t2 = new Thread(new AdaptiveScalerProbe());
+                Thread t2;
+                if ("predictive".equalsIgnoreCase(AutoScaleConfigReader.getScalingAlgorithm())) {
+                    Log.printLine("[Cloud2SimEngine] Initializing Predictive Adaptive Scaling...");
+                    t2 = new Thread(new PredictiveScaler());
+                } else {
+                    t2 = new Thread(new AdaptiveScalerProbe());
+                }
                 t2.start();
             }
         }

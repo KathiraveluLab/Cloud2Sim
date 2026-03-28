@@ -13,6 +13,7 @@ import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import pt.inesc_id.gsd.cloud2sim.hazelcast.keys.HzCloudletKey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,11 +142,11 @@ public class HazelSim {
     }
 
     /**
-     * Map: cloudletId -> cloudlet execution finished time
+     * Map: cloudletKey -> cloudlet execution finished time
      *
      * @return the map
      */
-    public IMap<Integer, Double> getCloudletFinishedTime() {
+    public IMap<HzCloudletKey, Double> getCloudletFinishedTime() {
         return instances.get(HzConstants.FIRST).getMap("finishedTime");
     }
 }

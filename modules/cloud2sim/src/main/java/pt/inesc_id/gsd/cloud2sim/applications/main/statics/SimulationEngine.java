@@ -23,9 +23,13 @@ import pt.inesc_id.gsd.cloud2sim.hazelcast.HzCloudlet;
 import pt.inesc_id.gsd.cloud2sim.hazelcast.HzDatacenterBroker;
 import pt.inesc_id.gsd.cloud2sim.applications.roundrobin.RoundRobinDatacenterBroker;
 import pt.inesc_id.gsd.cloud2sim.hazelcast.HzVm;
+import pt.inesc_id.gsd.cloud2sim.hazelcast.keys.HzCloudletKey;
+import pt.inesc_id.gsd.cloud2sim.hazelcast.keys.HzVmKey;
 import pt.inesc_id.gsd.cloud2sim.search.SearchProcessor;
 import pt.inesc_id.gsd.cloud2sim.topology.TopologyModel;
 import pt.inesc_id.gsd.cloud2sim.topology.TopologyParser;
+import pt.inesc_id.gsd.cloud2sim.workload.DistributionProvider;
+import pt.inesc_id.gsd.cloud2sim.workload.WorkloadGenerator;
 
 import java.io.IOException;
 
@@ -76,7 +80,7 @@ public class SimulationEngine {
                 } else {
                     vm = new HzVm(vmModel.id, vmModel.userId, vmModel.mips, vmModel.pes, vmModel.ram, vmModel.bw, vmModel.size, vmModel.vmm, new CloudletSchedulerSpaceShared());
                 }
-                objectCollection.getUserVmList().put(vmModel.id, vm);
+                objectCollection.getUserVmList().put(new HzVmKey(vmModel.id), vm);
                 SearchProcessor.getInstance().indexObject(vm);
             }
             return;
@@ -88,7 +92,7 @@ public class SimulationEngine {
             } else {
                 vm = new HzVm(i, userId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerSpaceShared());
             }
-            objectCollection.getUserVmList().put(i, vm);
+            objectCollection.getUserVmList().put(new HzVmKey(i), vm);
             SearchProcessor.getInstance().indexObject(vm);
         }
     }
@@ -118,7 +122,10 @@ public class SimulationEngine {
             for (TopologyModel.CloudletModel clModel : topology.cloudlets) {
                 cloudlet = new HzCloudlet(clModel.id, clModel.length, clModel.pes, clModel.fileSize, clModel.outputSize, utilizationModel, utilizationModel, utilizationModel);
                 cloudlet.setUserId(userId);
-                objectCollection.getUserCloudletList().put(clModel.id, cloudlet);
+                // Here we might not know the vmId yet if it's not assigned. 
+                // In static mode, we often assign after creation. 
+                // For co-location, we should assign a dummy or keep vmId -1 initially.
+                objectCollection.getUserCloudletList().put(new HzCloudletKey(clModel.id, -1), cloudlet);
                 SearchProcessor.getInstance().indexObject(cloudlet);
             }
             return;
@@ -130,9 +137,20 @@ public class SimulationEngine {
                     utilizationModel, utilizationModel);
             // setting the owner of these Cloudlets
             cloudlet.setUserId(userId);
-            objectCollection.getUserCloudletList().put(i, cloudlet);
+            objectCollection.getUserCloudletList().put(new HzCloudletKey(i, -1), cloudlet);
             SearchProcessor.getInstance().indexObject(cloudlet);
         }
+    }
+
+    /**
+     * Starts a dynamic workload generation.
+     * @param userId owner of the cloudlets
+     * @param provider the distribution provider for inter-arrival times
+     * @param count total number of cloudlets to generate
+     */
+    public static void createDynamicWorkload(int userId, DistributionProvider provider, int count) {
+        WorkloadGenerator generator = new WorkloadGenerator(provider);
+        generator.start(userId, count);
     }
 
     /**

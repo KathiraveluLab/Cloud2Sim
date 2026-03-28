@@ -22,6 +22,8 @@ public class AutoScaleConfigReader extends HzConfigReader {
     private static int timeBetweenScalingDecisions;
     private static int timeBetweenHealthChecks;
     private static String scalingMode;
+    private static String scalingAlgorithm = "reactive";
+    private static int lookAheadIntervals = 3;
 
     /**
      * Read the config file for autoscaler properties
@@ -50,6 +52,12 @@ public class AutoScaleConfigReader extends HzConfigReader {
             timeBetweenHealthChecks = Integer.parseInt(temp);
         }
         scalingMode = prop.getProperty("scalingMode");
+        if (prop.getProperty("scalingAlgorithm") != null) {
+            scalingAlgorithm = prop.getProperty("scalingAlgorithm");
+        }
+        if (prop.getProperty("lookAheadIntervals") != null) {
+            lookAheadIntervals = Integer.parseInt(prop.getProperty("lookAheadIntervals"));
+        }
     }
 
     /**
@@ -100,5 +108,13 @@ public class AutoScaleConfigReader extends HzConfigReader {
 
     public static String getMode() {
         return scalingMode;
+    }
+
+    public static String getScalingAlgorithm() {
+        return scalingAlgorithm;
+    }
+
+    public static int getLookAheadIntervals() {
+        return lookAheadIntervals;
     }
 }
