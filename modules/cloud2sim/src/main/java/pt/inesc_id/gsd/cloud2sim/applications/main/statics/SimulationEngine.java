@@ -23,6 +23,7 @@ import pt.inesc_id.gsd.cloud2sim.hazelcast.HzCloudlet;
 import pt.inesc_id.gsd.cloud2sim.hazelcast.HzDatacenterBroker;
 import pt.inesc_id.gsd.cloud2sim.applications.roundrobin.RoundRobinDatacenterBroker;
 import pt.inesc_id.gsd.cloud2sim.hazelcast.HzVm;
+import pt.inesc_id.gsd.cloud2sim.search.SearchProcessor;
 
 /**
  * The class that creates VMs and Cloudlets, with hard-coded values. Replace as appropriate.
@@ -62,6 +63,7 @@ public class SimulationEngine {
                 vm = new HzVm(i, userId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerSpaceShared());
             }
             objectCollection.getUserVmList().put(i, vm);
+            SearchProcessor.getInstance().indexObject(vm);
         }
     }
 
@@ -93,6 +95,7 @@ public class SimulationEngine {
             // setting the owner of these Cloudlets
             cloudlet.setUserId(userId);
             objectCollection.getUserCloudletList().put(i, cloudlet);
+            SearchProcessor.getInstance().indexObject(cloudlet);
         }
     }
 

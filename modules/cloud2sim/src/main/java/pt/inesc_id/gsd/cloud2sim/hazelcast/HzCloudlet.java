@@ -10,6 +10,7 @@
 
 package pt.inesc_id.gsd.cloud2sim.hazelcast;
 
+import org.hibernate.search.annotations.*;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.UtilizationModel;
 
@@ -18,7 +19,31 @@ import java.util.List;
 /**
  * Extending Cloudlet to use in a distributed environment with hazelcast.
  */
+@Indexed
 public class HzCloudlet extends Cloudlet {
+    @DocumentId
+    @Override
+    public int getCloudletId() {
+        return super.getCloudletId();
+    }
+
+    @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
+    @Override
+    public int getUserId() {
+        return super.getUserId();
+    }
+
+    @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
+    @Override
+    public int getStatus() {
+        return super.getStatus();
+    }
+
+    @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
+    @Override
+    public long getCloudletLength() {
+        return super.getCloudletLength();
+    }
     public HzCloudlet(int cloudletId, long cloudletLength, int pesNumber, long cloudletFileSize, long cloudletOutputSize, UtilizationModel utilizationModelCpu, UtilizationModel utilizationModelRam, UtilizationModel utilizationModelBw) {
         super(cloudletId, cloudletLength, pesNumber, cloudletFileSize, cloudletOutputSize, utilizationModelCpu, utilizationModelRam, utilizationModelBw);
         isHz = true;

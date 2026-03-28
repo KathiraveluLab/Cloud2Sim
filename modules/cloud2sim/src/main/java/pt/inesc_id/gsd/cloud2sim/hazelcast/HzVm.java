@@ -10,6 +10,7 @@
 
 package pt.inesc_id.gsd.cloud2sim.hazelcast;
 
+import org.hibernate.search.annotations.*;
 import org.cloudbus.cloudsim.CloudletScheduler;
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Vm;
@@ -17,7 +18,37 @@ import org.cloudbus.cloudsim.Vm;
 /**
  * Extending VM to use in a distributed environment with hazelcast.
  */
+@Indexed
 public class HzVm extends Vm {
+    @DocumentId
+    @Override
+    public int getId() {
+        return super.getId();
+    }
+
+    @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
+    @Override
+    public int getUserId() {
+        return super.getUserId();
+    }
+
+    @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
+    @Override
+    public int getRam() {
+        return super.getRam();
+    }
+
+    @Field(index = Index.YES, analyze = Analyze.NO, store = Store.YES)
+    @Override
+    public double getMips() {
+        return super.getMips();
+    }
+
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
+    @Override
+    public String getVmm() {
+        return super.getVmm();
+    }
     private HzObjectCollection hzObjectCollection = HzObjectCollection.getHzObjectCollection();
 
     public HzVm(int id, int userId, double mips, int numberOfPes, int ram, long bw, long size, String vmm,

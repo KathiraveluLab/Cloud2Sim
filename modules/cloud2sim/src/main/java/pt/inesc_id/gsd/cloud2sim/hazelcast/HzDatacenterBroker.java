@@ -31,6 +31,7 @@ import org.cloudbus.cloudsim.core.SimEvent;
 import pt.inesc_id.gsd.cloud2sim.concurrent.runnables.SubmittedCloudletsRemover;
 import pt.inesc_id.gsd.cloud2sim.concurrent.callables.CloudletListSubmitter;
 import pt.inesc_id.gsd.cloud2sim.concurrent.callables.VmListSubmitter;
+import pt.inesc_id.gsd.cloud2sim.search.SearchProcessor;
 
 /**
  * A hazelcast based datacenter broker, facilitating a distributed execution.
@@ -91,6 +92,9 @@ public class HzDatacenterBroker extends DatacenterBroker {
      */
     public void submitVmList(Map<Integer, HzVm> list) {
         hzObjectCollection.getVmList().putAll(list);
+        for (HzVm vm : list.values()) {
+            SearchProcessor.getInstance().indexObject(vm);
+        }
     }
 
     /**
@@ -122,6 +126,9 @@ public class HzDatacenterBroker extends DatacenterBroker {
      */
     public void submitCloudletList(Map<Integer, HzCloudlet> list) {
         hzObjectCollection.getCloudletList().putAll(list);
+        for (HzCloudlet cloudlet : list.values()) {
+            SearchProcessor.getInstance().indexObject(cloudlet);
+        }
     }
 
     /**
