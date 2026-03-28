@@ -2,6 +2,8 @@
 
 An Adaptive and Distributed Architecture for Cloud and MapReduce Algorithms and Simulations.
 
+Cloud2Sim proposes a distributed concurrent architecture to CloudSim simulations.
+
 ## Citing Cloud2Sim
 
 If you use Cloud2Sim in your research, please cite the below papers: 
