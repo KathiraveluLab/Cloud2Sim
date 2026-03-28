@@ -1,0 +1,86 @@
+Building Cloud2Sim using source using maven and running an example
+-------------------------------------------------------------------
+To build using maven:
+mvn clean install
+
+skipping the tests:
+$ mvn clean install -Dmaven.skip.test=true
+
+To skip executing the tests:
+$ mvn clean install -DskipTests
+
+
+Built distribution inside distribution/target.
+--------------------------------------------------
+$ tar -xzvf distribution/target/cloudsim-3.1-SNAPSHOT.tar.gz
+$ mv cloudsim-3.1-SNAPSHOT/jars/cloudsim-3.1-SNAPSHOT.jar cloudsim-3.1-SNAPSHOT/jars/cloudsim-examples-3.1-SNAPSHOT.jar cloudsim-3.1-SNAPSHOT/jars/cloud2sim-1.0-SNAPSHOT.jar .
+
+
+Running the Simulations.
+-------------------------
+To run an existing example:
+$ java -classpath cloudsim-3.1-SNAPSHOT.jar:cloudsim-examples-3.1-SNAPSHOT.jar:lib/hazelcast-3.2.jar:cloud2sim-1.0-SNAPSHOT.jar pt.inesc_id.gsd.cloud2sim.applications.main.statics.Simulator
+
+$ java -classpath cloudsim-3.1-SNAPSHOT.jar:cloudsim-examples-3.1-SNAPSHOT.jar:lib/hazelcast-3.2.jar:cloud2sim-1.0-SNAPSHOT.jar org.cloudbus.cloudsim.examples.power.planetlab.Dvfs
+
+$ nohup java -classpath cloudsim-3.1-SNAPSHOT.jar:cloudsim-examples-3.1-SNAPSHOT.jar:lib/hazelcast-3.2.jar:cloud2sim-1.0-SNAPSHOT.jar pt.inesc_id.gsd.cloud2sim.applications.main.mm.Simulator &
+
+To initiate an instance without running any specific code:
+$ java -classpath cloudsim-3.1-SNAPSHOT.jar:lib/hazelcast-3.2.jar:cloud2sim-1.0-SNAPSHOT.jar pt.inesc_id.gsd.cloud2sim.applications.main.dynamics.Initiator
+
+
+Running Cloud2Sim with Adaptive Scaling.
+--------------------------------------------
+Initiate the ScalableSimulator from the master node.
+$ java -classpath cloudsim-3.1-SNAPSHOT.jar:lib/hazelcast-3.2.jar:cloud2sim-1.0-SNAPSHOT.jar pt.inesc_id.gsd.cloud2sim.applications.main.dynamics.ScalableSimulator
+
+Initiate the IntelligentAdaptiveScaler from the other nodes.
+$ java -classpath cloudsim-3.1-SNAPSHOT.jar:lib/hazelcast-3.2.jar:cloud2sim-1.0-SNAPSHOT.jar pt.inesc_id.gsd.cloud2sim.scale.ias.IntelligentAdaptiveScaler
+
+
+Running the Map-Reduce Simulations.
+-----------------------------------
+The workload files are inside the folder conf/mapreduce/
+You may replace or add more or bigger load files.
+
+1) Using Hazelcast
+------------------
+Set the map-reduce workload size in the conf/cloud2sim.properties.
+# By default, up to 128 460, by using the 3 default files in conf/mapreduce
+mapReduceSize=10
+
+To run the simulations,
+$ java -classpath cloudsim-3.1-SNAPSHOT.jar:lib/hazelcast-3.2.jar:cloud2sim-1.0-SNAPSHOT.jar pt.inesc_id.gsd.cloud2sim.mapreduce.hazelcast.HzMapReduceSimulator
+
+To run with nohup, printing the output to nohup.out,
+$ nohup java -classpath cloudsim-3.1-SNAPSHOT.jar:lib/hazelcast-3.2.jar:cloud2sim-1.0-SNAPSHOT.jar pt.inesc_id.gsd.cloud2sim.mapreduce.hazelcast.HzMapReduceSimulator > nohup.out &
+
+2) Using Infinispan
+--------------------
+Set the map-reduce workload size in the conf/infinispan.properties.
+# By default, up to 128 460, by using the 3 default files in conf/mapreduce
+mapReduceSize=10
+
+To run the initiator,
+$ nohup java -classpath cloudsim-3.1-SNAPSHOT.jar:lib/*:cloud2sim-1.0-SNAPSHOT.jar pt.inesc_id.gsd.cloud2sim.infinispan.Initiator > nohup.out &
+
+To run the simulations,
+$ nohup java -classpath cloudsim-3.1-SNAPSHOT.jar:lib/*:cloud2sim-1.0-SNAPSHOT.jar pt.inesc_id.gsd.cloud2sim.mapreduce.infinispan.InfMapReduceSimulator > nohup.out &
+
+Copy the files to the other instances.
+----------------------------------------
+$ scp -r . pradeeban@146.193.41.145:/home/pradeeban
+or just,
+$ scp cloudsim-3.1-SNAPSHOT.jar cloudsim-examples-3.1-SNAPSHOT.jar cloud2sim-1.0-SNAPSHOT.jar pradeeban@146.193.41.145:/home/pradeeban
+and
+$ scp -r conf pradeeban@146.193.41.145:/home/pradeeban/
+
+
+Test environment
+-------------------
+146.193.41.141  ginja-a1
+146.193.41.142  ginja-a2
+146.193.41.143  ginja-a3
+146.193.41.144  ginja-a4
+146.193.41.145  ginja-a5
+146.193.41.146  ginja-a6 - default.
