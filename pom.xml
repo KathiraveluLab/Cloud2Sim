@@ -162,7 +162,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-search-infinispan</artifactId>
-            <version>4.5.1.Final</version>
+            <version>5.11.12.Final</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
