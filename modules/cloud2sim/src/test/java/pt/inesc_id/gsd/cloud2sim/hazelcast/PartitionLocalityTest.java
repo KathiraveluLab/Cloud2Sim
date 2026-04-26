@@ -17,8 +17,8 @@ import com.hazelcast.core.Partition;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import pt.inesc_id.gsd.cloud2sim.hazelcast.keys.HzCloudletKey;
-import pt.inesc_id.gsd.cloud2sim.hazelcast.keys.HzVmKey;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzCloudletKey;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzVmKey;
 
 import static org.junit.Assert.assertEquals;
 

@@ -64,6 +64,16 @@ public class Cloud2SimEngine {
         }
     }
 
+    public static void startSimulation() {
+        start();
+        CloudSim.startSimulation();
+    }
+
+    public static void stopSimulation() {
+        CloudSim.stopSimulation();
+        shutdown();
+    }
+
     public static void startHz() {
         startTime = System.currentTimeMillis();
         AutoScaleConfigReader.readConfig();

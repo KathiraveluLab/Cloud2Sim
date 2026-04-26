@@ -1,19 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<infinispan>
-    <global>
-        <transport>
-            <properties>
-                <property name="configurationFile" value="conf/jgroups-tcp-config.xml"/>
-            </properties>
-        </transport>
-    </global>
-    <namedCache name="transactional">
-        <transaction transactionMode="TRANSACTIONAL"/>
-        <clustering mode="distribution">
-            <sync/>
-            <!--hash numOwners="6"/-->
-        </clustering>
-    </namedCache>
+<infinispan
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="urn:infinispan:config:8.2 http://www.infinispan.org/schemas/infinispan-config-8.2.xsd"
+      xmlns="urn:infinispan:config:8.2">
+   <jgroups>
+      <stack-file name="tcp" path="conf/jgroups-tcp-config.xml"/>
+   </jgroups>
+   <cache-container name="cloud2sim" default-cache="transactional">
+      <transport stack="tcp"/>
+      <distributed-cache name="transactional" mode="SYNC">
+          <transaction mode="NON_XA"/>
+      </distributed-cache>
+   </cache-container>
 </infinispan>
-
-

@@ -12,8 +12,10 @@ package pt.inesc_id.gsd.cloud2sim.hazelcast;
 
 import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.compatibility.hazelcast.HazelSim;
-import pt.inesc_id.gsd.cloud2sim.hazelcast.keys.HzCloudletKey;
-import pt.inesc_id.gsd.cloud2sim.hazelcast.keys.HzVmKey;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzCloudletKey;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzVmKey;
+import com.hazelcast.core.IdGenerator;
+import com.hazelcast.core.IMap;
 
 /**
  * Access to the hazelcast distributed objects.
@@ -36,87 +38,94 @@ public class HzObjectCollection extends HazelSim {
     }
 
     /**
-     * Map: vmKey -> hostId
+     * Map: vmId -> hostId
      * @return the map
      */
-    public IMap<HzVmKey, Integer> getHostForVm() {
+    public IMap<Integer, Integer> getHostForVm() {
         return getFirstInstance().getMap("hostForVm");
     }
 
     /**
      * Gets the map of Vms created by the user.
-     * Map: Vm Key -> Vm
+     * Map: Vm Id -> Vm
      * @return the vm list
      */
-    public IMap<HzVmKey, HzVm> getUserVmList() {
+    public IMap<Integer, HzVm> getUserVmList() {
         return getFirstInstance().getMap("userVmList");
     }
 
     /**
      * Gets the map of cloudlets created by the user.
-     * Map: Cloudlet Key -> Cloudlet
+     * Map: Cloudlet Id -> Cloudlet
      * @return the cloudlet map
      */
-    public IMap<HzCloudletKey, HzCloudlet> getUserCloudletList() {
+    public IMap<Integer, HzCloudlet> getUserCloudletList() {
         return getFirstInstance().getMap("userCloudletList");
     }
 
     /**
      * Gets the vm map.
-     * Map: Vm Key -> Vm
+     * Map: Vm Id -> Vm
      * @return the vm list
      */
-    public IMap<HzVmKey, HzVm> getVmList() {
+    public IMap<Integer, HzVm> getVmList() {
         return getFirstInstance().getMap("vmList");
     }
 
     /**
      * Gets the VMs created Map.
-     * Map: Vm Key -> Vm
+     * Map: Vm Id -> Vm
      * @return the vm list
      */
-    public IMap<HzVmKey, HzVm> getVmsCreatedList() {
+    public IMap<Integer, HzVm> getVmsCreatedList() {
         return getFirstInstance().getMap("vmCreatedList");
     }
 
     /**
      * Gets the cloudlet map.
-     * Map: Cloudlet Key -> Cloudlet
+     * Map: Cloudlet Id -> Cloudlet
      * @return the cloudlet list
      */
-    public IMap<HzCloudletKey, HzCloudlet> getCloudletList() {
+    public IMap<Integer, HzCloudlet> getCloudletList() {
         return getFirstInstance().getMap("cloudletList");
     }
 
     /**
      * Gets the submitted cloudlets map.
-     * Map: Cloudlet Key -> Cloudlet
+     * Map: Cloudlet Id -> Cloudlet
      * @return the cloudlet submitted list
      */
-    public IMap<HzCloudletKey, HzCloudlet> getCloudletSubmittedList() {
+    public IMap<Integer, HzCloudlet> getCloudletSubmittedList() {
         return getFirstInstance().getMap("cloudletSubmittedList");
     }
 
     /**
      * Gets the cloudlet received Map.
-     * Map: Cloudlet Key -> Cloudlet
+     * Map: Cloudlet Id -> Cloudlet
      * @return the cloudlet received list
      */
-    public IMap<HzCloudletKey, HzCloudlet> getCloudletReceivedList() {
+    public IMap<Integer, HzCloudlet> getCloudletReceivedList() {
         return getFirstInstance().getMap("cloudletReceivedList");
     }
 
     /**
-     * Gets the cloudlet map. Always get from the FIRST instance.
-     * Map: Cloudlet Id -> Cloudlet
-     * @return the cloudlet list
+     * Gets the deployment information map.
+     * @return the deployment information
      */
     public IMap<Long, Integer> getDeploymentInformation() {
         return getFirstInstance().getMap("deploymentList");
     }
 
+    /**
+     * Gets the datacenter list.
+     * @return the datacenter list
+     */
     public IMap<Integer, Datacenter> getDatacenterList() {
         return getFirstInstance().getMap("datacenterList");
+    }
+
+    public IMap<HzCloudletKey, Double> getCloudletFinishedTime() {
+        return getFirstInstance().getMap("finishedTime");
     }
 
     public long getId() {

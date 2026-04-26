@@ -9,6 +9,8 @@
  */
 
 package pt.inesc_id.gsd.cloud2sim.applications.main.mm;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzCloudletKey;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzVmKey;
 
 import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.compatibility.common.ConfigReader;

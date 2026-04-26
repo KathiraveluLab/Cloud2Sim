@@ -9,6 +9,8 @@
  */
 
 package pt.inesc_id.gsd.cloud2sim.concurrent.callables;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzCloudletKey;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzVmKey;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.HazelcastInstanceAware;
@@ -72,7 +74,7 @@ public class CloudletListSubmitter implements Callable, Serializable, HazelcastI
                 }
             }
 
-            hzObjectCollection.getCloudletList().put(cloudletId, cloudlet);
+            hzObjectCollection.getCloudletList().put( cloudletId , cloudlet);
         }
 
         return map.localKeySet().size();

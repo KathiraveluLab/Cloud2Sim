@@ -14,7 +14,7 @@ import org.hibernate.search.annotations.*;
 import org.cloudbus.cloudsim.CloudletScheduler;
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Vm;
-import pt.inesc_id.gsd.cloud2sim.hazelcast.keys.HzVmKey;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzVmKey;
 
 /**
  * Extending VM to use in a distributed environment with hazelcast.
@@ -67,7 +67,7 @@ public class HzVm extends Vm {
     public void setHost(Host host) {
         if (host != null) {
             super.setHost(host);
-            hzObjectCollection.getHostForVm().put(new HzVmKey(this.getId()), host.getId());
+            hzObjectCollection.getHostForVm().put(this.getId(), host.getId());
         }
     }
 
@@ -77,8 +77,8 @@ public class HzVm extends Vm {
      */
     public int getHostId() {
         int id = -1;
-        if (hzObjectCollection.getHostForVm().get(new HzVmKey(getId()))!= null) {
-            id = hzObjectCollection.getHostForVm().get(new HzVmKey(getId()));
+        if (hzObjectCollection.getHostForVm().get(getId()) != null) {
+            id = hzObjectCollection.getHostForVm().get(getId());
         }
         return id;
     }

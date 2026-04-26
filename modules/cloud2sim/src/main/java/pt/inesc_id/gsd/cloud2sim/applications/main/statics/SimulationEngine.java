@@ -23,8 +23,8 @@ import pt.inesc_id.gsd.cloud2sim.hazelcast.HzCloudlet;
 import pt.inesc_id.gsd.cloud2sim.hazelcast.HzDatacenterBroker;
 import pt.inesc_id.gsd.cloud2sim.applications.roundrobin.RoundRobinDatacenterBroker;
 import pt.inesc_id.gsd.cloud2sim.hazelcast.HzVm;
-import pt.inesc_id.gsd.cloud2sim.hazelcast.keys.HzCloudletKey;
-import pt.inesc_id.gsd.cloud2sim.hazelcast.keys.HzVmKey;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzCloudletKey;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzVmKey;
 import pt.inesc_id.gsd.cloud2sim.search.SearchProcessor;
 import pt.inesc_id.gsd.cloud2sim.topology.TopologyModel;
 import pt.inesc_id.gsd.cloud2sim.topology.TopologyParser;
@@ -84,7 +84,7 @@ public class SimulationEngine {
                 } else {
                     vm = new HzVm(vmModel.id, vmModel.userId, vmModel.mips, vmModel.pes, vmModel.ram, vmModel.bw, vmModel.size, vmModel.vmm, new CloudletSchedulerSpaceShared());
                 }
-                objectCollection.getUserVmList().put(new HzVmKey(vmModel.id), vm);
+                objectCollection.getUserVmList().put(vmModel.id, vm);
                 SearchProcessor.getInstance().indexObject(vm);
             }
             return;
@@ -96,7 +96,7 @@ public class SimulationEngine {
             } else {
                 vm = new HzVm(i, userId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerSpaceShared());
             }
-            objectCollection.getUserVmList().put(new HzVmKey(i), vm);
+            objectCollection.getUserVmList().put(i, vm);
             SearchProcessor.getInstance().indexObject(vm);
         }
     }
@@ -129,7 +129,7 @@ public class SimulationEngine {
                 // Here we might not know the vmId yet if it's not assigned. 
                 // In static mode, we often assign after creation. 
                 // For co-location, we should assign a dummy or keep vmId -1 initially.
-                objectCollection.getUserCloudletList().put(new HzCloudletKey(clModel.id, -1), cloudlet);
+                objectCollection.getUserCloudletList().put( clModel.id , cloudlet);
                 SearchProcessor.getInstance().indexObject(cloudlet);
             }
             return;
@@ -141,7 +141,7 @@ public class SimulationEngine {
                     utilizationModel, utilizationModel);
             // setting the owner of these Cloudlets
             cloudlet.setUserId(userId);
-            objectCollection.getUserCloudletList().put(new HzCloudletKey(i, -1), cloudlet);
+            objectCollection.getUserCloudletList().put( i , cloudlet);
             SearchProcessor.getInstance().indexObject(cloudlet);
         }
     }

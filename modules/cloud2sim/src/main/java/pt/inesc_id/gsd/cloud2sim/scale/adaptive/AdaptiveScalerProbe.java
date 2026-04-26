@@ -57,7 +57,9 @@ public class AdaptiveScalerProbe implements Runnable {
 
     public static void setTerminateAllKey() {
         HealthParams.setToScaleIn(true);
-        instances.get(0).getAtomicLong("scalingDecision").getAndSet(DynamicScalingConstants.TERMINATE_ALL_FLAG);
+        if (instances.size() > 0) {
+            instances.get(0).getAtomicLong("scalingDecision").getAndSet(DynamicScalingConstants.TERMINATE_ALL_FLAG);
+        }
     }
 
     @Override

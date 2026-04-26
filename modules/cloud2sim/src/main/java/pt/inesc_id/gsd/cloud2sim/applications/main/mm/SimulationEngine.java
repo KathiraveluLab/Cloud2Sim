@@ -9,6 +9,8 @@
  */
 
 package pt.inesc_id.gsd.cloud2sim.applications.main.mm;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzCloudletKey;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzVmKey;
 
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.CloudletSchedulerTimeShared;
@@ -88,7 +90,7 @@ public class SimulationEngine {
                     utilizationModel, utilizationModel);
             // setting the owner of these Cloudlets
             cloudlet.setUserId(userId);
-            objectCollection.getUserCloudletList().put(i, cloudlet);
+            objectCollection.getUserCloudletList().put( i , cloudlet);
         }
     }
 

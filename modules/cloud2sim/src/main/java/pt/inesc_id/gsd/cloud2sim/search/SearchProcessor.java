@@ -10,35 +10,35 @@
 
 package pt.inesc_id.gsd.cloud2sim.search;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.queryParser.MultiFieldQueryParser;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.util.Version;
-import org.hibernate.search.SearchFactory;
-import org.hibernate.search.backend.impl.lucene.LuceneBackendQueueProcessor;
-import org.hibernate.search.backend.spi.Work;
-import org.hibernate.search.backend.spi.WorkType;
-import org.hibernate.search.engine.spi.SearchFactoryImplementor;
-import org.hibernate.search.impl.SearchFactoryImpl;
-import org.hibernate.search.cfg.SearchConfiguration;
-import org.hibernate.search.cfg.ReflectionHierarchy;
+import org.hibernate.annotations.common.reflection.ReflectionManager;
+import org.hibernate.search.cfg.SearchMapping;
 import org.hibernate.search.cfg.spi.SearchConfigurationBase;
-import org.hibernate.search.spi.SearchFactoryBuilder;
+import org.hibernate.search.engine.service.classloading.spi.ClassLoaderService;
+import org.hibernate.search.engine.service.classloading.impl.DefaultClassLoaderService;
+import org.hibernate.search.engine.service.spi.Service;
+import org.hibernate.search.spi.SearchIntegrator;
+import org.hibernate.search.spi.SearchIntegratorBuilder;
+import org.hibernate.search.backend.spi.WorkType;
+import org.hibernate.search.backend.spi.Work;
+import org.hibernate.search.backend.TransactionContext;
+import pt.inesc_id.gsd.cloud2sim.hazelcast.HzCloudlet;
+import pt.inesc_id.gsd.cloud2sim.hazelcast.HzVm;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 /**
  * SearchProcessor handles the Hibernate Search indexing and querying logic.
- * It uses an Infinispan-based Lucene directory for distributed indexing.
+ * It uses a RAM directory provider for standalone simulation search.
  */
 public class SearchProcessor {
     private static SearchProcessor instance = null;
-    private SearchFactoryImplementor searchFactory;
+    private SearchIntegrator searchIntegrator;
 
     private SearchProcessor() {
         initSearchFactory();
@@ -52,43 +52,63 @@ public class SearchProcessor {
     }
 
     /**
-     * Initializes the Hibernate Search Factory with Infinispan directory provider.
+     * Initializes the Hibernate Search Integrator with RAM directory provider.
      */
     private void initSearchFactory() {
-        SearchConfiguration config = new SearchConfigurationBase() {
+        SearchConfigurationBase config = new SearchConfigurationBase() {
             @Override
             public Properties getProperties() {
                 Properties props = new Properties();
-                props.put("hibernate.search.default.directory_provider", "infinispan");
-                props.put("hibernate.search.infinispan.cachemanager_jndiname", "java:jboss/infinispan/container/hibernate-search");
-                // Fallback to local ram for testing if JDNI not available
                 props.put("hibernate.search.default.directory_provider", "ram");
-                props.put("hibernate.search.lucene_version", "LUCENE_36");
+                props.setProperty("hibernate.search.lucene_version", Version.LATEST.toString());
                 return props;
             }
 
             @Override
             public Iterator<Class<?>> getClassMappings() {
-                return Collections.emptyIterator();
+                Set<Class<?>> mappings = new HashSet<>();
+                mappings.add(HzVm.class);
+                mappings.add(HzCloudlet.class);
+                return mappings.iterator();
             }
 
             @Override
-            public Class<?> getClassForName(String name) {
-                try {
-                    return Class.forName(name);
-                } catch (ClassNotFoundException e) {
-                    return null;
-                }
+            public ClassLoaderService getClassLoaderService() {
+                return new DefaultClassLoaderService();
+            }
+
+            @Override
+            public Map<Class<? extends Service>, Object> getProvidedServices() {
+                return Collections.emptyMap();
+            }
+
+            @Override
+            public SearchMapping getProgrammaticMapping() {
+                return null;
+            }
+
+            @Override
+            public ReflectionManager getReflectionManager() {
+                return null;
             }
 
             @Override
             public String getProperty(String propertyName) {
                 return getProperties().getProperty(propertyName);
             }
+
+            @Override
+            public Class<?> getClassMapping(String name) {
+                try {
+                    return Class.forName(name);
+                } catch (ClassNotFoundException e) {
+                    return null;
+                }
+            }
         };
 
-        SearchFactoryBuilder builder = new SearchFactoryBuilder();
-        searchFactory = (SearchFactoryImplementor) builder.forConfiguration(config).buildSearchFactory();
+        SearchIntegratorBuilder builder = new SearchIntegratorBuilder();
+        searchIntegrator = builder.configuration(config).buildSearchIntegrator();
     }
 
     /**
@@ -96,8 +116,22 @@ public class SearchProcessor {
      * @param obj the object to index (HzCloudlet or HzVm)
      */
     public void indexObject(Object obj) {
-        Work work = new Work(obj, null, WorkType.ADD);
-        searchFactory.getBackendQueueProcessor().performWork(work);
+        TransactionContext txContext = new TransactionContext() {
+            @Override
+            public boolean isTransactionInProgress() { return false; }
+            @Override
+            public Object getTransactionIdentifier() { return null; }
+            @Override
+            public void registerSynchronization(javax.transaction.Synchronization synchronization) {}
+        };
+
+        if (obj instanceof HzVm) {
+            HzVm vm = (HzVm) obj;
+            searchIntegrator.getWorker().performWork(new Work(vm, vm.getId(), WorkType.ADD), txContext);
+        } else if (obj instanceof HzCloudlet) {
+            HzCloudlet cloudlet = (HzCloudlet) obj;
+            searchIntegrator.getWorker().performWork(new Work(cloudlet, cloudlet.getCloudletId(), WorkType.ADD), txContext);
+        }
     }
 
     /**
@@ -106,19 +140,8 @@ public class SearchProcessor {
      * @param queryString the Lucene query string
      * @return a list of matching object IDs or objects (simplified for now)
      */
-    public List<Object> search(Class<?> entityType, String queryString) {
-        try {
-            QueryParser parser = new QueryParser(Version.LUCENE_36, "vmm", new StandardAnalyzer(Version.LUCENE_36));
-            Query luceneQuery = parser.parse(queryString);
-            
-            // In a real HS environment, we'd use FullTextSession.
-            // For this standalone implementation, we'll log the query attempt.
-            System.out.println("[SearchProcessor] Executing distributed query: " + luceneQuery.toString());
-            
-            return Collections.emptyList(); // Placeholder for actual result retrieval
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
+    public java.util.List<Object> search(Class<?> entityType, String queryString) {
+        System.out.println("[SearchProcessor] Searching for " + entityType.getSimpleName() + " with query: " + queryString);
+        return Collections.emptyList();
     }
 }

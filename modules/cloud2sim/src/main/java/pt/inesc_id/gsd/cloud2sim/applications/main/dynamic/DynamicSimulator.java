@@ -31,6 +31,9 @@ public class DynamicSimulator {
         Log.printLine("Starting Dynamic Workload Simulation...");
 
         try {
+            // 0. Load configurations
+            Cloud2SimEngine.startHz();
+
             // 1. Initialize CloudSim
             int numUser = 1;
             Calendar calendar = Calendar.getInstance();

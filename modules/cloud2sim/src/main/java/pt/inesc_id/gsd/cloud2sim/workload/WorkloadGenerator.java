@@ -14,7 +14,7 @@ import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.UtilizationModelFull;
 import pt.inesc_id.gsd.cloud2sim.hazelcast.HzCloudlet;
 import pt.inesc_id.gsd.cloud2sim.hazelcast.HzObjectCollection;
-import pt.inesc_id.gsd.cloud2sim.hazelcast.keys.HzCloudletKey;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzCloudletKey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +83,7 @@ public class WorkloadGenerator {
         cloudlet.setUserId(userId);
 
         logger.log(Level.INFO, "Submitting Dynamic Cloudlet ID: {0}", id);
-        hzObjectCollection.getUserCloudletList().put(new HzCloudletKey(id, -1), cloudlet);
+        hzObjectCollection.getUserCloudletList().put( id , cloudlet);
     }
 
     public void stop() {

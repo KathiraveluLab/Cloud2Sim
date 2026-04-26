@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.cloudbus.cloudsim.compatibility.hazelcast.HazelSim;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzCloudletKey;
 import org.cloudbus.cloudsim.core.CloudSim;
 
 /**
@@ -999,7 +1000,7 @@ public class Cloudlet {
         if (newStatus == SUCCESS) {
             if (isHz) {
                 if (CloudSim.clock() > getFinishTime()) {
-                    objectCollection.getCloudletFinishedTime().put(cloudletId, CloudSim.clock());
+                    objectCollection.getCloudletFinishedTime().put(new HzCloudletKey(cloudletId, vmId), CloudSim.clock());
                 }
             } else {
                 finishTime = CloudSim.clock();

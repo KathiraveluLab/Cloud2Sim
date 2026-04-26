@@ -13,7 +13,7 @@ import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import pt.inesc_id.gsd.cloud2sim.hazelcast.keys.HzCloudletKey;
+import org.cloudbus.cloudsim.compatibility.hazelcast.keys.HzCloudletKey;
 
 import java.util.ArrayList;
 import java.util.List;

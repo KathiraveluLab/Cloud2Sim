@@ -8,7 +8,7 @@
  * Copyright (c) 2014, Pradeeban Kathiravelu <pradeeban.kathiravelu@tecnico.ulisboa.pt>
  */
 
-package pt.inesc_id.gsd.cloud2sim.hazelcast.keys;
+package org.cloudbus.cloudsim.compatibility.hazelcast.keys;
 
 import com.hazelcast.core.PartitionAware;
 import java.io.Serializable;

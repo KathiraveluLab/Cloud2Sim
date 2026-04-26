@@ -29,3 +29,6 @@ _bmad
 .claude
 .codex
 .cursor
+.vscode
+run_sim.sh
+lib/

@@ -9,7 +9,6 @@
  */
 
 package pt.inesc_id.gsd.cloud2sim.mapreduce.hazelcast;
-
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.compatibility.common.ConfigReader;
 import org.cloudbus.cloudsim.compatibility.hazelcast.HazelSimCore;

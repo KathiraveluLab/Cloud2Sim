@@ -31,7 +31,7 @@ public class WordCountReducerFactory
 
 
     @Override
-    public Reducer<String, Long, Long> newReducer(String key) {
+    public Reducer<Long, Long> newReducer(String key) {
         // Create a new Reducer for the given key
         HzMapReduceParams.numberOfReducers.getAndIncrement();
         HzMapReduceParams.reducersOfTheJob.getAndIncrement();
@@ -39,7 +39,7 @@ public class WordCountReducerFactory
     }
 
     private class WordCountReducer
-            extends Reducer<String, Long, Long> {
+            extends Reducer<Long, Long> {
 
         private volatile long sum = 0;
 

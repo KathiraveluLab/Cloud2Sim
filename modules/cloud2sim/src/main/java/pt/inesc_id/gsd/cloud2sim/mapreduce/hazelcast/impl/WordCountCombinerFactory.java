@@ -29,7 +29,7 @@ public class WordCountCombinerFactory
         implements CombinerFactory<String, Long, Long> {
 
     @Override
-    public Combiner<String, Long, Long> newCombiner(String key) {
+    public Combiner<Long, Long> newCombiner(String key) {
         // Create a new Combiner for the given key
         HzMapReduceParams.numberOfCombiners.getAndIncrement();
         HzMapReduceParams.combinersOfTheJob.getAndIncrement();
@@ -37,12 +37,12 @@ public class WordCountCombinerFactory
     }
 
     private class WordCountCombiner
-            extends Combiner<String, Long, Long> {
+            extends Combiner<Long, Long> {
 
         private long sum = 0;
 
         @Override
-        public void combine(String key, Long value) {
+        public void combine(Long value) {
             if (ConfigReader.getIsVerbose()) {
                 HzMapReduceParams.combineInvocations.getAndIncrement();
                 Log.printConcatLine("Combine..");
