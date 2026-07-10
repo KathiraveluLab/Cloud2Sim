@@ -47,22 +47,22 @@
 			<dependency>
 				<groupId>com.hazelcast</groupId>
 				<artifactId>hazelcast</artifactId>
-				<version>5.7.0</version>
+				<version>3.12.13</version>
 			</dependency>
 			<dependency>
 				<groupId>com.hazelcast</groupId>
 				<artifactId>hazelcast-all</artifactId>
-				<version>4.2.8</version>
+				<version>3.12.13</version>
 			</dependency>
 			<dependency>
 				<groupId>com.hazelcast</groupId>
 				<artifactId>hazelcast-client</artifactId>
-				<version>3.12.12</version>
+				<version>3.12.13</version>
 			</dependency>
 			<dependency>
 				<groupId>org.infinispan</groupId>
 				<artifactId>infinispan-core</artifactId>
-				<version>16.1.4</version>
+				<version>8.2.11.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
@@ -82,7 +82,7 @@
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-core</artifactId>
-				<version>6.0.0.Final</version>
+				<version>5.4.33.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.lucene</groupId>
