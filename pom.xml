@@ -62,7 +62,7 @@
 			<dependency>
 				<groupId>org.infinispan</groupId>
 				<artifactId>infinispan-core</artifactId>
-				<version>8.2.11.Final</version>
+				<version>16.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
